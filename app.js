@@ -26,6 +26,14 @@
     stopSound();
     clearTimeout(captionTimer);
     syncTheme();
+    if (!reduced.matches) {
+      themeButton.getAnimations({subtree: true}).forEach(animation => animation.cancel());
+      const icon = themeButton.querySelector(root.dataset.theme === 'light' ? '.moon-icon' : '.sun-icon');
+      icon.animate([
+        {transform: 'rotate(-60deg) scale(.65)', opacity: 0},
+        {transform: 'rotate(0) scale(1)', opacity: 1},
+      ], {duration: 240, easing: 'cubic-bezier(.22, 1, .36, 1)'});
+    }
     applyTone();
     try { localStorage.setItem('shawn-theme', root.dataset.theme); } catch {}
   });
@@ -122,7 +130,7 @@
     });
   }
 
-  function animateGuitar() {
+  function animateGuitar(strum = false) {
     if (reduced.matches) return;
     clearTimeout(reset);
     guitar.classList.remove('is-strumming');
@@ -134,6 +142,21 @@
         {transform:'translateX(-1.5px)'}, {transform:'translateX(1px)'}, {transform:'translateX(0)'},
       ], {duration: 280, easing: 'ease-out'});
     });
+    if (strum) {
+      guitar.querySelectorAll('.guitar-drawing').forEach(drawing => {
+        drawing.animate([
+          {transform: 'rotate(0)'}, {transform: 'rotate(-3deg)', offset: .2},
+          {transform: 'rotate(1deg)', offset: .55}, {transform: 'rotate(0)'},
+        ], {duration: 280, easing: 'ease-out'});
+      });
+      guitar.querySelectorAll('.strum-ring').forEach((ring, index) => {
+        ring.animate([
+          {transform: 'scale(.6)', opacity: 0},
+          {transform: 'scale(.85)', opacity: .45, offset: .2},
+          {transform: 'scale(1.5)', opacity: 0},
+        ], {duration: 260, delay: index * 35, easing: 'ease-out'});
+      });
+    }
     reset = setTimeout(() => guitar.classList.remove('is-strumming'), 300);
   }
 
@@ -149,7 +172,7 @@
   guitar.addEventListener('click', async () => {
     const collection = root.dataset.theme === 'light' ? acousticChords : chords;
     const chord = collection[chordIndex++ % collection.length];
-    animateGuitar(); stopSound();
+    animateGuitar(true); stopSound();
     const request = soundRequest;
     caption.textContent = chord.name + (chordIndex % 4 === 0 ? ' — back to the chorus' : ' — one more?');
     clearTimeout(captionTimer);
@@ -240,6 +263,7 @@
   reduced.addEventListener('change', () => {
     clearTimeout(reset); guitar.classList.remove('is-strumming'); clearNotes();
     guitar.getAnimations({subtree: true}).forEach(animation => animation.cancel());
+    themeButton.getAnimations({subtree: true}).forEach(animation => animation.cancel());
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopSound(); });
   window.addEventListener('blur', stopSound);

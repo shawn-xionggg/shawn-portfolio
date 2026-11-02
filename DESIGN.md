@@ -21,6 +21,8 @@ The header switch changes both the guitar artwork and audio voice. Dark mode sho
 
 Hover motion lasts about 150ms; guitar artwork transitions and section arrivals last 180–240ms. Transitions animate opacity and transforms. Guitar strings briefly vibrate on activation, without forced layout reads. Reduced-motion preferences disable nonessential animation.
 
+The introduction enters in a short stagger, finishing within 480ms. Strumming adds a restrained body recoil and two fading resonance rings; hovering only animates the strings. Theme changes rotate and fade in the sun or moon icon over 240ms. Repeated interactions cancel prior instrument and icon animations, and enabling reduced motion cancels them immediately.
+
 The glowing pick follows beside the native mouse cursor, with a broad blue halo in dark mode. Both idle when settled and never intercept input. They hide on touch and keyboard navigation. Small discoveries remain in the name's period, project drawings, four-strum message, `encore` shortcut, and footer hints. Sound is enabled by default and starts on a guitar click or tap, with a visible mute toggle. The electric voice uses a high-gain preamp, oversampled distortion, and cabinet filtering; the acoustic voice bypasses that chain.
 
 Keep focus indicators visible and controls comfortably tappable. Core content must remain readable without JavaScript. Preserve the existing project names, links, technical details, and experience; Allos is the current project name.
