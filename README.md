@@ -33,7 +33,8 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 - `ocean-motion.css`: native scroll timelines for underwater layers, with static fallback and reduced-motion states.
 - `ocean.js`: throttled depth readout, scene and dog state changes, and timeline range measurements; no per-frame background rendering during scroll.
 - `waves.js`: layered, asymmetric guitar ripples with overlapping strums, clean/driven timing, and bounded animation cleanup.
-- `lab.js`: the chocolate Labrador's seabed walk, one-pass playback, visibility pausing, and reduced-motion pose.
+- `lab.js`: the chocolate Labrador's seabed walk, one-pass playback, photo lens interaction, visibility pausing, and reduced-motion pose.
+- `public/images/chocolate-lab.jpg`: optimized photo for the dog's circular close-up.
 - `dev-toolbar.jsx`: development-only Agentation mount in manual copy mode.
 - `vite.config.js`: local server and production résumé asset.
 - `shawn-xiong-resume.pdf`: the linked résumé.
@@ -44,6 +45,7 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 - Tap the guitar to cycle G5, D5, E5, and C5. Unplugged uses a quiet clean channel; plugging into the amp routes the same guitar through a high-gain preamp, distortion, and cabinet filter.
 - Hold and drag the cable by its grip to connect or disconnect. Tapping the plug or amp jack also toggles the connection, as do Enter/Space on the focused controls. Escape cancels an active drag; interrupted touch gestures restore the previous position and connection.
 - Strum four times for a small message.
+- Hover or focus the walking dog to see his real photo through a magnifying glass. Tap to toggle it on touch screens; Escape closes it. He pauses while you look.
 - Hover or focus within a project to wake up its drawing.
 - Type `encore` to toggle the after-hours palette; Escape restores the normal accents and stops sound.
 - The intro's “Discover the little extras” link and footer's “Show Easter eggs” button open a guide with buttons for hidden notes, the guitar, and encore mode. The guide also opens without JavaScript through its native disclosure.
