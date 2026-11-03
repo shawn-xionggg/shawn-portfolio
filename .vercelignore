@@ -1,0 +1,5 @@
+.preview/
+node_modules/
+dist/
+.git/
+DESIGN.md

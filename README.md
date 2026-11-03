@@ -31,6 +31,8 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 - `app.js`: clean/distorted synthesized chords and Easter eggs.
 - `cable.js`: pointer capture, cable geometry, jack snapping, and accessible connection controls.
 - `ocean.js`: scroll-driven underwater layers, depth gauge, and reduced-motion handling; rendering sleeps while idle.
+- `waves.js`: layered, asymmetric guitar ripples with overlapping strums, clean/driven timing, and bounded animation cleanup.
+- `lab.js`: the chocolate Labrador's seabed walk, one-pass playback, visibility pausing, and reduced-motion pose.
 - `dev-toolbar.jsx`: development-only Agentation mount in manual copy mode.
 - `vite.config.js`: local server and production résumé asset.
 - `shawn-xiong-resume.pdf`: the linked résumé.

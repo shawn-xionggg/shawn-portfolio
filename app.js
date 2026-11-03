@@ -28,7 +28,6 @@ setupOcean();
   setupCable(connected => {
     plugged = connected;
     stopSound(); clearTimeout(captionTimer); applyTone();
-    document.querySelector('#guitar-type').textContent = connected ? 'Amp / driven' : 'Clean / quiet';
     caption.textContent = connected ? 'Amp on. Tap to strum.' : 'Clean & quiet. Tap the guitar.';
   });
 

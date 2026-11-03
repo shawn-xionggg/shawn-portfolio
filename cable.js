@@ -3,7 +3,8 @@ export function setupCable(onConnectionChange) {
   const plug = stage.querySelector('.cable-plug');
   const jack = stage.querySelector('.amp-jack');
   const cable = stage.querySelector('.patch-cable');
-  const paths = cable.querySelectorAll('path');
+  const paths = cable.querySelectorAll('.cable-shadow, .cable-line');
+  const plugArt = cable.querySelector('.cable-plug-art');
   const hint = document.querySelector('#cable-hint');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const point = {x: 24, y: 280};
@@ -11,15 +12,19 @@ export function setupCable(onConnectionChange) {
   let geometry;
 
   function measure() {
-    const box = stage.getBoundingClientRect();
+    // The plug and SVG share stage-local coordinates, even while the intro
+    // is scaled/tilted by the dive animation. Never size the viewBox from
+    // a transformed screen-space bounding rectangle.
+    const width = stage.clientWidth, height = stage.clientHeight;
+    cable.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    const screenToLocal = cable.getScreenCTM().inverse();
     const socket = jack.getBoundingClientRect();
     const svg = stage.querySelector('.electric-guitar');
-    const anchor = new DOMPoint(96, 187).matrixTransform(svg.getScreenCTM());
-    geometry = {box, width: box.width, height: box.height,
-      jackX: socket.x + socket.width / 2 - box.x,
-      jackY: socket.y + socket.height / 2 - box.y,
-      startX: anchor.x - box.x, startY: anchor.y - box.y};
-    cable.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+    const anchor = new DOMPoint(96, 187).matrixTransform(svg.getScreenCTM()).matrixTransform(screenToLocal);
+    const socketCenter = new DOMPoint(socket.x + socket.width / 2, socket.y + socket.height / 2).matrixTransform(screenToLocal);
+    geometry = {width, height, screenToLocal,
+      jackX: socketCenter.x, jackY: socketCenter.y,
+      startX: anchor.x, startY: anchor.y};
   }
 
   function constrain() {
@@ -30,6 +35,9 @@ export function setupCable(onConnectionChange) {
   function render() {
     frame = 0;
     plug.style.transform = `translate3d(${point.x}px, ${point.y}px, 0)`;
+    // Draw the cord and grip in the same SVG so they can never separate
+    // when the surrounding page is transformed or the browser scales it.
+    plugArt.setAttribute('transform', `translate(${point.x} ${point.y})`);
     const {startX, startY, height} = geometry;
     const slack = Math.min(height - 8, Math.max(startY, point.y + 24) + 60);
     const endX = point.x + 10, endY = point.y + 24;
@@ -101,14 +109,16 @@ export function setupCable(onConnectionChange) {
   plug.addEventListener('pointerdown', event => {
     if (!event.isPrimary || event.button !== 0 || drag) return;
     measure(); suppressClick = false;
-    drag = {id:event.pointerId, x:event.clientX, y:event.clientY,
+    const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(geometry.screenToLocal);
+    drag = {id:event.pointerId, x:local.x, y:local.y,
       point:{...point}, connected, moved:false};
     plug.setPointerCapture(event.pointerId);
     stage.classList.add('is-dragging');
   });
   plug.addEventListener('pointermove', event => {
     if (!drag || event.pointerId !== drag.id) return;
-    const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+    const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(geometry.screenToLocal);
+    const dx = local.x - drag.x, dy = local.y - drag.y;
     if (!drag.moved && Math.hypot(dx, dy) < 5) return;
     if (!drag.moved) { drag.moved = true; syncConnection(false); }
     point.x = drag.point.x + dx; point.y = drag.point.y + dy;
