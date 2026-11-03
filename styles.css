@@ -220,6 +220,7 @@ details[open] .project-details { animation: arrive 180ms ease-out; }
 .content-block { padding: 24px 20px; border: 1px solid #e6edf715; border-radius: 4px; background: #0b0f16a6; min-width: 0; }
 .block-label, .text-section .block-title { display: block; font: 500 12px/1.6 var(--mono); color: var(--accent); margin-bottom: 16px; }
 .content-block>p:last-child { margin-bottom: 0; }
+.text-section .experience-employer { color: #f2cf75; }
 .text-section h3 { font-size: 22px; font-weight: 400; line-height: 1.4; }
 .text-section p { font-size: 15px; line-height: 1.9; color: var(--muted); margin-bottom: 16px; }
 .text-section .role { font-size: 12px; margin: 8px 0 24px; }
