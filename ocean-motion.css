@@ -1,0 +1,75 @@
+/* Static depth states also cover older browsers and reduced motion. */
+.ocean.is-submerged .ocean-deep { opacity: .6; }
+.ocean.is-deep .ocean-deep { opacity: .94; }
+.ocean.is-submerged .ocean-rock { opacity: .75; }
+.ocean.is-deep .ocean-floor { opacity: 1; }
+.ocean.is-submerged .ocean-surface { opacity: 0; }
+.depth-gauge[data-depth-band="1"] .depth-track>span { transform: translateY(80px); }
+.depth-gauge[data-depth-band="2"] .depth-track>span { transform: translateY(156px); }
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* One composited plane for the current lines: no per-path transforms,
+       scaling, or rotating strokes that force SVG repainting each frame. */
+    .ocean-current-plane { will-change: transform, opacity; animation-name: current-descent; }
+    .ocean-deep { animation-name: depth-shade; }
+    .ocean-light { animation-name: light-descent; }
+    .ocean-surface { animation-name: surface-descent; }
+    .ocean-rock-left { animation-name: left-cliff-descent; }
+    .ocean-rock-right { animation-name: right-cliff-descent; }
+    .ocean-floor { animation-name: floor-descent; }
+    .depth-track>span { animation-name: depth-marker; }
+    .intro { animation-name: intro-descent; }
+    .dive-waterline { animation-name: waterline-descent; }
+    .ocean-current-plane, .ocean-deep, .ocean-light, .ocean-surface,
+    .ocean-rock, .ocean-floor, .depth-track>span, .intro, .dive-waterline {
+      animation-duration: 1s;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+    }
+    .intro:has(:focus-visible) { animation-name: none; transform: none; }
+  }
+}
+
+@keyframes current-descent {
+  0% { transform: translate3d(0,0,0); opacity: .14; }
+  50% { opacity: .3; }
+  100% { transform: translate3d(-60px,-180px,0); opacity: .14; }
+}
+@keyframes depth-shade { from { opacity: 0; } to { opacity: .94; } }
+@keyframes light-descent {
+  from { transform: translate3d(0,0,0); opacity: .82; }
+  to { transform: translate3d(-60px,-180px,0); opacity: .1; }
+}
+@keyframes surface-descent {
+  0% { transform: translate3d(0,0,0); opacity: 1; }
+  25%,100% { transform: translate3d(0,-500px,0); opacity: 0; }
+}
+@keyframes left-cliff-descent {
+  0% { transform: translate3d(0,280px,0); opacity: 0; }
+  12% { opacity: 0; }
+  40% { opacity: .85; }
+  100% { transform: translate3d(0,-100px,0); opacity: .85; }
+}
+@keyframes right-cliff-descent {
+  0% { transform: translate3d(0,540px,0); opacity: 0; }
+  28% { opacity: 0; }
+  58% { opacity: .8; }
+  100% { transform: translate3d(0,-60px,0); opacity: .8; }
+}
+@keyframes floor-descent {
+  0% { transform: translate3d(0,180px,0); opacity: 0; }
+  65% { opacity: 0; }
+  100% { transform: translate3d(0,0,0); opacity: 1; }
+}
+@keyframes depth-marker { from { transform: translateY(0); } to { transform: translateY(156px); } }
+@keyframes intro-descent {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-60px) scale(.9); }
+}
+@keyframes waterline-descent {
+  0% { transform: translate3d(0,85vh,0) rotate(-5deg); opacity: 0; }
+  50% { opacity: .85; }
+  100% { transform: translate3d(0,-45vh,0) rotate(5deg); opacity: 0; }
+}

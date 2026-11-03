@@ -30,7 +30,8 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 - `styles.css`: responsive grid, typography, cable rig, and small transitions.
 - `app.js`: clean/distorted synthesized chords and Easter eggs.
 - `cable.js`: pointer capture, cable geometry, jack snapping, and accessible connection controls.
-- `ocean.js`: scroll-driven underwater layers, depth gauge, and reduced-motion handling; rendering sleeps while idle.
+- `ocean-motion.css`: native scroll timelines for underwater layers, with static fallback and reduced-motion states.
+- `ocean.js`: throttled depth readout, scene and dog state changes, and timeline range measurements; no per-frame background rendering during scroll.
 - `waves.js`: layered, asymmetric guitar ripples with overlapping strums, clean/driven timing, and bounded animation cleanup.
 - `lab.js`: the chocolate Labrador's seabed walk, one-pass playback, visibility pausing, and reduced-motion pose.
 - `dev-toolbar.jsx`: development-only Agentation mount in manual copy mode.
