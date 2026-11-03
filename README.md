@@ -1,6 +1,6 @@
 # Shawn Xiong — Portfolio
 
-A personal portfolio with spacious typography, a midnight-blue default theme, and a small interactive guitar. Light mode switches to warm paper, an acoustic illustration, and clean acoustic-style chords.
+A personal portfolio with spacious typography, a midnight-blue palette, and an interactive electric guitar and amplifier. It starts unplugged with a quiet clean tone. Drag the cable plug into the amplifier for distortion; pull it out to go clean again.
 
 ## Local development
 
@@ -26,9 +26,10 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 
 ## Files
 
-- `index.html`: content, project links, native build notes, and both guitar SVGs.
-- `styles.css`: responsive grid, themes, typography, and small transitions.
-- `app.js`: theme switching, synthesized chords, cursor pick, and Easter eggs.
+- `index.html`: content, project links, native build notes, and guitar/amp artwork.
+- `styles.css`: responsive grid, typography, cable rig, and small transitions.
+- `app.js`: clean/distorted synthesized chords and Easter eggs.
+- `cable.js`: pointer capture, cable geometry, jack snapping, and accessible connection controls.
 - `dev-toolbar.jsx`: development-only Agentation mount in manual copy mode.
 - `vite.config.js`: local server and production résumé asset.
 - `shawn-xiong-resume.pdf`: the linked résumé.
@@ -36,12 +37,13 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 ## Small discoveries
 
 - Click the period after Shawn's name for a brief burst of music notes.
-- Tap the guitar to play. Dark mode cycles G5, D5, E5, and C5 through a high-gain preamp, distortion, and cabinet filter; light mode cycles G, D, Em, and C through a clean channel.
+- Tap the guitar to cycle G5, D5, E5, and C5. Unplugged uses a quiet clean channel; plugging into the amp routes the same guitar through a high-gain preamp, distortion, and cabinet filter.
+- Hold and drag the cable by its grip to connect or disconnect. Tapping the plug or amp jack also toggles the connection, as do Enter/Space on the focused controls. Escape cancels an active drag; interrupted touch gestures restore the previous position and connection.
 - Strum four times for a small message.
 - Hover or focus within a project to wake up its drawing.
 - Type `encore` to toggle the after-hours palette; Escape restores the normal accents and stops sound.
-- The footer's `psst…` button offers hints and eventually toggles after-hours mode for touch users.
+- The intro's “Discover the little extras” link and footer's “Show Easter eggs” button open a guide with buttons for hidden notes, the guitar, and encore mode. The guide also opens without JavaScript through its native disclosure.
 
-Sound is enabled by default, but audio only starts after a guitar click or tap. Use the Sound on/off button to mute it. Audio is synthesized locally; it stops when the tab is hidden or loses focus. The glowing pick and soft dark-mode halo accompany the native cursor, never capture clicks, and stop rendering when settled. They hide for touch and keyboard navigation.
+Sound is enabled by default, but audio only starts after a guitar click or tap. Use the Sound on/off button to mute it. Audio is synthesized locally; it stops when the tab is hidden or loses focus. The site uses the native cursor.
 
-Animations respect reduced motion. The chosen theme persists locally and is applied before CSS loads. Content and native project disclosures remain usable without JavaScript.
+Animations respect reduced motion. Each page load starts unplugged; the former light-mode switch and acoustic variant have been removed. Content and native project disclosures remain usable without JavaScript.

@@ -1,3 +1,5 @@
+import { setupCable } from './cable.js';
+
 (() => {
   'use strict';
   const guitar = document.querySelector('.guitar');
@@ -7,54 +9,25 @@
   const hint = document.querySelector('.secret-hint');
   const message = document.querySelector('.little-message');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const themeButton = document.querySelector('.theme-toggle');
-  const root = document.documentElement;
-  function syncTheme() {
-    const dark = root.dataset.theme !== 'light';
-    themeButton.setAttribute('aria-pressed', String(dark));
-    themeButton.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
-    document.querySelector('meta[name="theme-color"]').content = dark ? '#0b0e14' : '#f5f3ed';
-    guitar.setAttribute('aria-label', dark ? 'Strum the electric guitar' : 'Strum the acoustic guitar');
-    document.querySelector('#guitar-type').textContent = dark ? 'Electric' : 'Acoustic';
-    caption.textContent = dark ? 'Plugged in. Tap to strum.' : 'Unplugged. Tap to strum.';
-  }
-  themeButton.hidden = false;
-  syncTheme();
-  themeButton.addEventListener('click', () => {
-    root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
-    document.body.classList.remove('after-hours');
-    stopSound();
-    clearTimeout(captionTimer);
-    syncTheme();
-    if (!reduced.matches) {
-      themeButton.getAnimations({subtree: true}).forEach(animation => animation.cancel());
-      const icon = themeButton.querySelector(root.dataset.theme === 'light' ? '.moon-icon' : '.sun-icon');
-      icon.animate([
-        {transform: 'rotate(-60deg) scale(.65)', opacity: 0},
-        {transform: 'rotate(0) scale(1)', opacity: 1},
-      ], {duration: 240, easing: 'cubic-bezier(.22, 1, .36, 1)'});
-    }
-    applyTone();
-    try { localStorage.setItem('shawn-theme', root.dataset.theme); } catch {}
-  });
+  let plugged = false;
   const chords = [
     {name: 'G5', notes: [98, 146.83, 196]},
     {name: 'D5', notes: [146.83, 220, 293.66]},
     {name: 'E5', notes: [82.41, 123.47, 164.81]},
     {name: 'C5', notes: [130.81, 196, 261.63]}
   ];
-  const acousticChords = [
-    {name: 'G', notes: [98, 123.47, 146.83, 196, 246.94, 392]},
-    {name: 'D', notes: [146.83, 220, 293.66, 369.99]},
-    {name: 'Em', notes: [82.41, 123.47, 164.81, 196, 246.94, 329.63]},
-    {name: 'C', notes: [130.81, 164.81, 196, 261.63, 329.63]},
-  ];
   const voices = new Set();
   const buffers = new Map();
   let reset, captionTimer, messageTimer, chordIndex = 0, sound = true, soundRequest = 0;
-  let audio, output, cleanGain, driveGain, typed = '', lastKey = 0, hintIndex = 0;
+  let audio, output, cleanGain, driveGain, typed = '', lastKey = 0;
   soundButton.hidden = false;
   hint.hidden = false;
+  setupCable(connected => {
+    plugged = connected;
+    stopSound(); clearTimeout(captionTimer); applyTone();
+    document.querySelector('#guitar-type').textContent = connected ? 'Amp / driven' : 'Clean / quiet';
+    caption.textContent = connected ? 'Amp on. Tap to strum.' : 'Clean & quiet. Tap the guitar.';
+  });
 
   function say(text) {
     clearTimeout(messageTimer);
@@ -71,10 +44,10 @@
 
   function applyTone() {
     if (!audio || audio.state === 'closed' || !cleanGain) return;
-    const electric = root.dataset.theme !== 'light';
+    const electric = plugged;
     cleanGain.gain.value = electric ? 0 : 1;
     driveGain.gain.value = electric ? 1 : 0;
-    output.gain.value = electric ? .18 : .3;
+    output.gain.value = electric ? .16 : .12;
   }
 
   async function prepareAudio() {
@@ -170,13 +143,13 @@
     if (event.pointerType === 'mouse') animateGuitar();
   });
   guitar.addEventListener('click', async () => {
-    const collection = root.dataset.theme === 'light' ? acousticChords : chords;
+    const collection = chords;
     const chord = collection[chordIndex++ % collection.length];
     animateGuitar(true); stopSound();
     const request = soundRequest;
     caption.textContent = chord.name + (chordIndex % 4 === 0 ? ' — back to the chorus' : ' — one more?');
     clearTimeout(captionTimer);
-    captionTimer = setTimeout(() => { caption.textContent = root.dataset.theme === 'light' ? 'Unplugged. Tap to strum.' : 'Plugged in. Tap to strum.'; }, 2600);
+    captionTimer = setTimeout(() => { caption.textContent = plugged ? 'Amp on. Tap to strum.' : 'Clean & quiet. Tap the guitar.'; }, 2600);
     if (chordIndex === 4) say('Four chords. A suspicious number of songs.');
     if (sound) {
       try {
@@ -223,16 +196,29 @@
 
   function encore() {
     const active = document.body.classList.toggle('after-hours');
-    say(active ? 'Encore. Stage lights on. (Esc to leave)' : 'Back to the main set.');
+    document.querySelector('[data-extra="encore"]').setAttribute('aria-pressed', String(active));
+    say(active ? 'Encore. Violet accents on. (Esc to leave)' : 'Back to the main set.');
   }
-  const hints = [
-    'That glowing dot in my name looks a little suspicious.',
-    'The guitar knows four chords. Click it a few times.',
-    'One more song? Type ENCORE anywhere on the page.'
-  ];
+  const extras = document.querySelector('#easter-eggs');
+  function showExtras() {
+    extras.open = true;
+    extras.scrollIntoView({block: 'center', behavior: 'instant'});
+    extras.querySelector('summary').focus({preventScroll: true});
+  }
   hint.addEventListener('click', () => {
-    if (hintIndex < hints.length) say(hints[hintIndex++]);
-    else { encore(); hintIndex = 0; }
+    showExtras();
+  });
+  document.querySelector('.discover-link').addEventListener('click', event => {
+    event.preventDefault(); showExtras();
+  });
+  document.querySelectorAll('[data-extra]').forEach(button => {
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      if (button.dataset.extra === 'encore') { encore(); return; }
+      const target = button.dataset.extra === 'notes' ? dot : guitar;
+      target.scrollIntoView({block: 'center', behavior: 'instant'});
+      target.focus({preventScroll: true}); target.click();
+    });
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
@@ -249,21 +235,44 @@
     if (typed === 'encore') { encore(); typed = ''; }
   });
 
-  // Animate once as a section arrives; content is never hidden while waiting for JS.
-  if ('IntersectionObserver' in window) {
+  // Offscreen panels unfold on arrival; without JS every panel stays visible.
+  if ('IntersectionObserver' in window && !reduced.matches) {
+    const revealTargets = [...document.querySelectorAll('.work, .text-section, .project, .content-block, .easter-eggs, .contact')];
+    const positions = revealTargets.map(target => target.getBoundingClientRect().top);
+    document.querySelectorAll('.project-list, .section-content').forEach(group => {
+      [...group.children].forEach((child, index) => child.style.setProperty('--unfold-delay', `${Math.min(index, 3) * 65}ms`));
+    });
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        if (!reduced.matches) entry.target.classList.add('arrive');
+        entry.target.classList.remove('reveal-pending');
         observer.unobserve(entry.target);
       });
-    }, {threshold: .12});
-    document.querySelectorAll('.project, .text-section, .contact').forEach(section => observer.observe(section));
+    }, {threshold: 0, rootMargin: '0px 0px -10% 0px'});
+    revealTargets.forEach((target, index) => {
+      target.classList.add('scroll-reveal');
+      if (positions[index] >= innerHeight * .9) {
+        target.classList.add('reveal-pending');
+        observer.observe(target);
+      }
+    });
+    document.addEventListener('focusin', event => {
+      for (let target = event.target; target; target = target.parentElement) {
+        if (target.classList?.contains('reveal-pending')) {
+          target.classList.remove('reveal-pending');
+          observer.unobserve(target);
+        }
+      }
+    });
+    reduced.addEventListener('change', () => {
+      if (!reduced.matches) return;
+      observer.disconnect();
+      revealTargets.forEach(target => target.classList.remove('reveal-pending'));
+    });
   }
   reduced.addEventListener('change', () => {
     clearTimeout(reset); guitar.classList.remove('is-strumming'); clearNotes();
     guitar.getAnimations({subtree: true}).forEach(animation => animation.cancel());
-    themeButton.getAnimations({subtree: true}).forEach(animation => animation.cancel());
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopSound(); });
   window.addEventListener('blur', stopSound);
@@ -272,67 +281,53 @@
     if (audio && audio.state !== 'closed') audio.close().catch(() => {});
   });
 
-  // A small companion to the native cursor. Never intercept clicks or text selection.
-  const pick = document.querySelector('.cursor-pick');
+  // A soft light follows the native cursor; no custom cursor or pick.
   const glow = document.querySelector('.cursor-glow');
   const aura = glow.firstElementChild;
   const finePointer = matchMedia('(any-hover: hover) and (any-pointer: fine)');
   const forcedColors = matchMedia('(forced-colors: active)');
-  let pickFrame = 0, lastFrame = 0, pickVisible = false;
-  const position = {x: 0, y: 0, targetX: 0, targetY: 0, angle: -14, targetAngle: -14};
-
-  function placePick() {
-    pick.style.transform = `translate3d(${position.x.toFixed(2)}px, ${position.y.toFixed(2)}px, 0) rotate(${position.angle.toFixed(2)}deg)`;
-    aura.style.transform = `translate3d(${(position.x - 249).toFixed(2)}px, ${(position.y - 246).toFixed(2)}px, 0)`;
+  let glowFrame = 0, lastGlowFrame = 0, glowVisible = false;
+  let glowX = 0, glowY = 0, targetX = 0, targetY = 0;
+  function placeGlow() {
+    aura.style.transform = `translate3d(${glowX - 260}px, ${glowY - 260}px, 0)`;
   }
-  function followPick(now) {
-    pickFrame = 0;
-    const elapsed = lastFrame ? Math.min(now - lastFrame, 50) : 16;
-    lastFrame = now;
+  function followGlow(now) {
+    glowFrame = 0;
+    const elapsed = lastGlowFrame ? Math.min(now - lastGlowFrame, 50) : 16;
+    lastGlowFrame = now;
     const ease = 1 - Math.exp(-elapsed / 45);
-    position.x += (position.targetX - position.x) * ease;
-    position.y += (position.targetY - position.y) * ease;
-    position.angle += (position.targetAngle - position.angle) * ease;
-    const moving = Math.abs(position.targetX - position.x) + Math.abs(position.targetY - position.y) + Math.abs(position.targetAngle - position.angle) > .15;
-    if (!moving) {
-      position.x = position.targetX; position.y = position.targetY; position.angle = position.targetAngle;
-    }
-    placePick();
-    if (moving && pickVisible) pickFrame = requestAnimationFrame(followPick);
-    else lastFrame = 0;
+    glowX += (targetX - glowX) * ease; glowY += (targetY - glowY) * ease;
+    const moving = Math.abs(targetX - glowX) + Math.abs(targetY - glowY) > .15;
+    if (!moving) { glowX = targetX; glowY = targetY; }
+    placeGlow();
+    if (moving && glowVisible) glowFrame = requestAnimationFrame(followGlow);
+    else lastGlowFrame = 0;
   }
-  function hidePick() {
-    pickVisible = false; pick.classList.remove('visible', 'over-link');
-    glow.classList.remove('visible');
-    cancelAnimationFrame(pickFrame); pickFrame = 0; lastFrame = 0;
-    pick.style.transform = 'translate3d(-100px, -100px, 0)';
+  function hideGlow() {
+    glowVisible = false; glow.classList.remove('visible');
+    cancelAnimationFrame(glowFrame); glowFrame = 0; lastGlowFrame = 0;
   }
   window.addEventListener('pointermove', event => {
-    if (event.pointerType !== 'mouse' || !finePointer.matches || forcedColors.matches || document.hidden) { hidePick(); return; }
-    const targetX = Math.max(8, Math.min(innerWidth - 38, event.clientX + 15));
-    position.targetAngle = -14 + Math.max(-12, Math.min(12, (targetX - position.targetX) * .16));
-    position.targetX = targetX;
-    position.targetY = Math.max(8, Math.min(innerHeight - 42, event.clientY + 17));
-    pick.classList.toggle('over-link', Boolean(event.target.closest?.('a, button, summary')));
-    if (!pickVisible || reduced.matches) {
-      position.x = position.targetX; position.y = position.targetY; position.angle = -14;
-      cancelAnimationFrame(pickFrame); pickFrame = 0; lastFrame = 0;
-      placePick();
+    if (event.pointerType !== 'mouse' || !finePointer.matches || forcedColors.matches || document.hidden) { hideGlow(); return; }
+    targetX = event.clientX; targetY = event.clientY;
+    if (!glowVisible || reduced.matches) {
+      glowX = targetX; glowY = targetY;
+      cancelAnimationFrame(glowFrame); glowFrame = 0; lastGlowFrame = 0;
+      placeGlow();
     }
-    pickVisible = true; pick.classList.add('visible');
-    glow.classList.add('visible');
-    if (!reduced.matches && !pickFrame) pickFrame = requestAnimationFrame(followPick);
+    glowVisible = true; glow.classList.add('visible');
+    if (!reduced.matches && !glowFrame) glowFrame = requestAnimationFrame(followGlow);
   }, {passive: true});
-  window.addEventListener('pointerout', event => { if (!event.relatedTarget) hidePick(); });
-  window.addEventListener('pointerdown', event => { if (event.pointerType !== 'mouse') hidePick(); }, {passive: true});
-  window.addEventListener('blur', hidePick);
-  window.addEventListener('resize', hidePick, {passive: true});
-  window.addEventListener('pagehide', hidePick);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) hidePick(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Tab' || event.key === 'Escape') hidePick(); });
-  finePointer.addEventListener('change', hidePick);
-  forcedColors.addEventListener('change', hidePick);
-  reduced.addEventListener('change', hidePick);
+  window.addEventListener('pointerout', event => { if (!event.relatedTarget) hideGlow(); });
+  window.addEventListener('pointerdown', event => { if (event.pointerType !== 'mouse') hideGlow(); }, {passive: true});
+  window.addEventListener('blur', hideGlow);
+  window.addEventListener('resize', hideGlow, {passive: true});
+  window.addEventListener('pagehide', hideGlow);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) hideGlow(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Tab' || event.key === 'Escape') hideGlow(); });
+  finePointer.addEventListener('change', hideGlow);
+  forcedColors.addEventListener('change', hideGlow);
+  reduced.addEventListener('change', hideGlow);
 })();
 
 if (import.meta.env?.DEV) {
