@@ -65,23 +65,30 @@ body { margin: 0; background: var(--paper); color: var(--ink); isolation: isolat
 .dive-cue:hover .dive-arrow { transform: translateY(6px); }
 @media (max-width: 1479px) { .depth-gauge { display: none; } }
 @media (max-width: 639px) { .dive-cue { gap: 16px; min-height: 136px; font-size: 9px; letter-spacing: .025em; } }
-.stage-lights { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; opacity: 0; transition: opacity 600ms ease-out; background: radial-gradient(ellipse at 62% -12%,#fff3ce38,transparent 62%); }
-.stage-lights>span { position: absolute; top: -20vh; width: 75vw; height: 130vh; pointer-events: none; }
-.stage-lights>span:first-child { left: 12vw; transform: rotate(-12deg); background: radial-gradient(ellipse at 50% 0%,#fff5da50, #d9eceb0d 42%,transparent 68%); }
-.stage-lights>span:nth-child(2) { right: -8vw; transform: rotate(18deg); background: radial-gradient(ellipse at 50% 0%,#e5f4ff28, #b8dce60b 45%,transparent 70%); }
+.stage-lights { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; opacity: 0; transition: opacity 600ms linear; background: radial-gradient(ellipse at 78% -18%,#e8f4ee24,#c1e3ee08 38%,transparent 65%); }
 :root[data-amp="on"] .stage-lights { opacity: 1; }
 .water-rays { position: absolute; inset: 0; overflow: hidden; }
-.light-ray { --ray-color: 255 244 214; --ray-angle: -34deg; --ray-speed: 12s; --ray-delay: 0s; position: absolute; top: -20vh; left: 45%; width: clamp(150px,22vw,420px); height: 160vh; transform-origin: 50% 0; transform: rotate(var(--ray-angle)); background: linear-gradient(90deg,transparent 8%,rgb(var(--ray-color) / .08) 35%,rgb(var(--ray-color) / .17) 50%,rgb(var(--ray-color) / .07) 68%,transparent 92%); clip-path: polygon(42% 0,58% 0,100% 100%,0 100%); mask-image: linear-gradient(#000,#000 15%,#0009 48%,transparent 92%); animation: ray-sway 22s ease-in-out infinite alternate; animation-delay: var(--ray-delay); animation-play-state: paused; }
-.light-ray::after { content: ''; position: absolute; inset: 0; opacity: .3; background: linear-gradient(90deg,transparent 18%,rgb(var(--ray-color) / .15) 45%,rgb(var(--ray-color) / .2) 55%,transparent 82%); animation: sun-shimmer var(--ray-speed) ease-in-out infinite alternate; animation-delay: var(--ray-delay); animation-play-state: paused; }
-.light-ray:nth-child(2) { left: 48%; width: 14vw; --ray-angle: -21deg; --ray-delay: -2.1s; --ray-speed: 15s; }
-.light-ray:nth-child(3) { left: 49%; --ray-color: 230 244 255; --ray-angle: -8deg; --ray-delay: -3.8s; --ray-speed: 13s; }
-.light-ray:nth-child(4) { left: 54%; width: 16vw; --ray-angle: 9deg; --ray-delay: -1.3s; --ray-speed: 11s; }
-.light-ray:nth-child(5) { left: 57%; --ray-angle: 23deg; --ray-delay: -4.2s; --ray-speed: 16s; }
-.light-ray:nth-child(6) { left: 61%; width: 18vw; --ray-color: 230 244 255; --ray-angle: 36deg; --ray-delay: -2.8s; --ray-speed: 14s; }
+/* Soft angular falloff forms shafts without clipped polygon edges. All share
+   one sunlight direction; uneven, slow refraction only changes opacity/transform. */
+.light-ray { --ray-color: 228 244 244; --ray-angle: 24deg; --ray-speed: 13s; --ray-drift: 29s; --ray-delay: -4s; position: absolute; top: -24vh; left: 34%; width: clamp(240px,28vw,520px); height: 150vh; transform-origin: 50% 0; transform: rotate(var(--ray-angle)); opacity: .75; background: conic-gradient(from 174deg at 50% 0%,transparent 0deg,rgb(var(--ray-color) / .015) 1.5deg,rgb(var(--ray-color) / .065) 3.5deg,rgb(var(--ray-color) / .18) 5.8deg,rgb(var(--ray-color) / .1) 7deg,rgb(var(--ray-color) / .025) 9deg,transparent 12deg); mask-image: linear-gradient(#000 0%,#000e 20%,#0008 45%,#0002 68%,transparent 90%); animation: ray-sway var(--ray-drift) ease-in-out infinite; animation-delay: var(--ray-delay); animation-play-state: paused; }
+.light-ray::after { content: ''; position: absolute; inset: 0; transform-origin: 50% 0; opacity: .4; background: conic-gradient(from 176deg at 50% 0%,transparent 0deg,rgb(var(--ray-color) / .025) 2deg,rgb(var(--ray-color) / .14) 4deg,rgb(var(--ray-color) / .035) 5.5deg,transparent 8deg); animation: sun-shimmer var(--ray-speed) ease-in-out infinite; animation-delay: var(--ray-delay); animation-play-state: paused; }
+.light-ray:nth-child(2) { left: 43%; --ray-angle: 22deg; --ray-delay: -11s; --ray-speed: 17s; --ray-drift: 37s; }
+.light-ray:nth-child(3) { left: 48%; --ray-color: 250 245 224; --ray-angle: 25deg; --ray-delay: -7s; --ray-speed: 11s; --ray-drift: 31s; }
+.light-ray:nth-child(4) { left: 59%; --ray-angle: 23deg; --ray-delay: -19s; --ray-speed: 19s; --ray-drift: 41s; }
+.light-ray:nth-child(5) { left: 65%; --ray-color: 238 247 237; --ray-angle: 26deg; --ray-delay: -13s; --ray-speed: 14s; --ray-drift: 34s; }
+.light-ray:nth-child(6) { left: 78%; --ray-angle: 24deg; --ray-delay: -23s; --ray-speed: 23s; --ray-drift: 43s; }
 :root[data-amp="on"] .light-ray, :root[data-amp="on"] .light-ray::after { animation-play-state: running; }
 :root .stage-lights.is-paused .light-ray, :root .stage-lights.is-paused .light-ray::after { animation-play-state: paused; }
-@keyframes ray-sway { from { transform: translateX(-8px) rotate(calc(var(--ray-angle) - 2deg)); } to { transform: translateX(10px) rotate(calc(var(--ray-angle) + 2deg)); } }
-@keyframes sun-shimmer { from { opacity: .25; transform: translateX(-3%) scaleX(.92); } to { opacity: .6; transform: translateX(4%) scaleX(1.08); } }
+@keyframes ray-sway {
+  0%,100% { transform: translate3d(-8px,0,0) rotate(calc(var(--ray-angle) - 1deg)) scaleX(.94); opacity: .6; }
+  38% { transform: translate3d(7px,0,0) rotate(calc(var(--ray-angle) + .7deg)) scaleX(1.06); opacity: .88; }
+  72% { transform: translate3d(-2px,0,0) rotate(calc(var(--ray-angle) - .3deg)) scaleX(.98); opacity: .68; }
+}
+@keyframes sun-shimmer {
+  0%,100% { opacity: .22; transform: rotate(-1.2deg) scaleX(.8); }
+  31% { opacity: .65; transform: rotate(.6deg) scaleX(1.1); }
+  67% { opacity: .32; transform: rotate(-.4deg) scaleX(.9); }
+}
 .cursor-glow { position: fixed; inset: 0; overflow: hidden; pointer-events: none; user-select: none; z-index: 1; opacity: 0; transition: opacity 200ms linear; }
 .cursor-glow.visible { opacity: 1; }
 .cursor-glow>span { position: absolute; left: 0; top: 0; width: 520px; height: 520px; background: radial-gradient(circle, rgb(145 202 255 / .14), rgb(145 202 255 / .065) 28%, rgb(159 140 255 / .035) 46%, transparent 70%); transform: translate3d(-600px,-600px,0); }
