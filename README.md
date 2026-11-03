@@ -1,5 +1,7 @@
 # Shawn Xiong — Portfolio
 
+[Live site — shawnxionggg.work](https://shawnxionggg.work)
+
 A personal portfolio with spacious typography, a midnight-blue palette, and an interactive electric guitar and amplifier. It starts unplugged with a quiet clean tone. Drag the cable plug into the amplifier for distortion; pull it out to go clean again.
 
 ## Local development
