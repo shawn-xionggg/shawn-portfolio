@@ -14,7 +14,28 @@
   <script type="module" src="/app.js"></script>
 </head>
 <body id="top">
-  <div class="backdrop" aria-hidden="true"></div>
+  <div class="backdrop ocean" aria-hidden="true">
+    <div class="ocean-deep"></div>
+    <div class="ocean-light"><span></span><span></span><span></span></div>
+    <svg class="ocean-surface" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMin slice" fill="none">
+      <ellipse cx="840" cy="-80" rx="1050" ry="340"/>
+      <ellipse cx="840" cy="-80" rx="870" ry="290"/>
+      <ellipse cx="840" cy="-80" rx="680" ry="225"/>
+      <ellipse cx="840" cy="-80" rx="500" ry="160"/>
+      <ellipse cx="840" cy="-80" rx="330" ry="105"/>
+    </svg>
+    <svg class="ocean-current" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none">
+      <path d="M-200 860C200 360 310 1060 760 660S1360 220 1800 440"/>
+      <path d="M-200 900C200 400 310 1100 760 700S1360 260 1800 480"/>
+      <path d="M-200 940C200 440 310 1140 760 740S1360 300 1800 520"/>
+      <path d="M-200 980C200 480 310 1180 760 780S1360 340 1800 560"/>
+    </svg>
+  </div>
+  <div class="depth-gauge" aria-hidden="true" hidden>
+    <span class="depth-zone">Surface</span>
+    <span class="depth-track"><span></span></span>
+    <span class="depth-reading">000<span> m</span></span>
+  </div>
   <div class="stage-lights" aria-hidden="true"><span></span><span></span></div>
   <a class="skip-link" href="#work">Skip to work</a>
   <div class="page">
@@ -67,6 +88,7 @@
           </div>
         <div class="intro-footer"><span>Software / Hardware / Sound</span><a class="discover-link" href="#easter-eggs">Discover the little extras <span aria-hidden="true">↓</span></a><a href="https://github.com/shawn-xionggg" target="_blank" rel="noopener">Find me on GitHub <span aria-hidden="true">&#8599;</span></a></div>
       </section>
+      <a class="dive-cue" href="#work"><span>Below the surface</span><span class="dive-arrow" aria-hidden="true">↓</span><span>Scroll to dive</span></a>
       <section class="work" id="work" aria-labelledby="work-title">
         <div class="section-heading"><span class="section-label">01 / Projects</span><h2 id="work-title">Selected<br> work.</h2><span>2025 &mdash; 2026</span></div>
         <div class="project-list">

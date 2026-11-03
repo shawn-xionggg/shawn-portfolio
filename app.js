@@ -1,4 +1,7 @@
 import { setupCable } from './cable.js';
+import { setupOcean } from './ocean.js';
+
+setupOcean();
 
 (() => {
   'use strict';

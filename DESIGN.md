@@ -10,7 +10,8 @@ The page presents Shawn's engineering work with a small guitar influence. It use
 - Projects, experience, and about use section labels on the left and content on the right, collapsing to one column on mobile.
 - Projects, Experience, and About each sit in a bordered dark panel with a short accent rule and generous separation. Section labels use 16px type on mobile and 18px on desktop.
 - Each project has its own outlined inset panel. Experience separates the current role from its work; About separates engineering from life outside it. Native expandable build notes preserve keyboard and no-JavaScript behavior.
-- A dot-free background uses soft pools of blue light and faint diagonal shading. These fixed decorative layers never capture input; the panels keep longer content readable. The sparse opening takes inspiration from Laguerre Jean-Bernard's name-first layout and Amy Xiong's calm spacing and illustrated interaction.
+- The underwater background uses a few broad surface ripples, soft descending light shafts, and four current contours. Scrolling moves these layers upward at different speeds and fades the scene into deep navy. Avoid dots, particle fields, and busy textures. Panels have translucent blue edges and dark inset cards to keep content readable.
+- A “Below the surface / Scroll to dive” link separates the introduction from the work. A quiet desktop depth gauge progresses from 000 to 120 m; these numbers are a visual metaphor for page progress. It hides below 1480px so it never crowds the content.
 
 ## Palette and guitar rig
 
@@ -25,6 +26,8 @@ When connected, the plug's collar sits against the jack and the metal shaft is c
 Hover motion lasts about 150ms; guitar artwork transitions and section arrivals last 180–240ms. Transitions animate opacity and transforms. Guitar strings briefly vibrate on activation, without forced layout reads. Reduced-motion preferences disable nonessential animation.
 
 Offscreen sections and their content blocks start transparent and slightly folded back, then unfold from their top edge as they enter the viewport. The transform settles over 620ms and opacity over 420ms, with content blocks staggered by 65ms. Each reveal runs once. Content is visible by default without JavaScript; reduced motion reveals everything immediately, and keyboard focus reveals any pending ancestors.
+
+The ocean follows native scrolling without scroll interception. Its animation runs only on scroll, resize, and content-height changes, using one queued frame and transform/opacity updates. There is no perpetual rendering loop. Reduced motion removes scene parallax, retaining depth shading and the gauge. Without JavaScript the scene remains a static illustration and all content stays available. The cursor glow and amplifier lights remain independent of ocean depth.
 
 The introduction enters in a short stagger, finishing within 480ms. Strumming adds a restrained body recoil and two fading resonance rings; hovering only animates the strings. Cable dragging uses pointer capture and one scheduled render per frame; geometry is measured at gesture start and resize, not in a perpetual animation loop. Reduced motion keeps direct dragging available while disabling decorative motion.
 

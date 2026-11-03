@@ -30,6 +30,7 @@ The Agentation toolbar appears at the bottom right in development. Activate it, 
 - `styles.css`: responsive grid, typography, cable rig, and small transitions.
 - `app.js`: clean/distorted synthesized chords and Easter eggs.
 - `cable.js`: pointer capture, cable geometry, jack snapping, and accessible connection controls.
+- `ocean.js`: scroll-driven underwater layers, depth gauge, and reduced-motion handling; rendering sleeps while idle.
 - `dev-toolbar.jsx`: development-only Agentation mount in manual copy mode.
 - `vite.config.js`: local server and production résumé asset.
 - `shawn-xiong-resume.pdf`: the linked résumé.
